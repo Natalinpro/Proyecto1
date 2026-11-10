@@ -41,7 +41,7 @@ def mostrar(cam):
     for e, r, p in cam:
         print(f"{e:<8}{r or 'ε':<10}{p or 'ε'}")
 
-
+# Diferentes ejemplos para ponerlo a prueba 
 if __name__ == "__main__":
     acepta("aabb", ap, tr=True)
     print()
