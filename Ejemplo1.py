@@ -1,20 +1,22 @@
 # AP para a^n b^n (n >= 1). "" representa ε
 K = {"q1", "q2"}
-SG = {"a", "b"}
-GM = {"a"}
-S0 = "q1"
-FN = {"q2"}
-
-# ((estado, leer, sacar), (estado_nuevo, meter))
-DL = [
+sigma = {"a", "b"}
+gamma = {"a"}
+s = "q1"
+F = {"q2"}
+delta = [
     (("q1", "a", ""), ("q1", "a")),
     (("q1", "b", "a"), ("q2", "")),
     (("q2", "b", "a"), ("q2", "")),
 ]
+ap = (K, sigma, gamma, delta, s, F)
 
 
-def acepta(w, tr=False):
-    ini = (S0, w, "")
+def acepta(w, ap, tr=False):
+    K, sigma, gamma, delta, s, F = ap
+    if any(c not in sigma for c in w):
+        return False
+    ini = (s, w, "")
     stk = [(ini, [ini])]
     vis = set()
     while stk:
@@ -23,11 +25,11 @@ def acepta(w, tr=False):
             continue
         vis.add(cfg)
         e, r, p = cfg
-        if e in FN and not r and not p:
+        if e in F and not r and not p:
             if tr:
                 mostrar(cam)
             return True
-        for (e1, lee, sac), (e2, met) in DL:
+        for (e1, lee, sac), (e2, met) in delta:
             if e1 == e and r.startswith(lee) and p.endswith(sac):
                 nv = (e2, r[len(lee):], p[:len(p) - len(sac)] + met)
                 stk.append((nv, cam + [nv]))
@@ -41,7 +43,7 @@ def mostrar(cam):
 
 
 if __name__ == "__main__":
-    acepta("aabb", tr=True)
+    acepta("aabb", ap, tr=True)
     print()
-    for w in ["ab", "aabb", "aaabbb", "abab", "aab", "abb", "ba", "", "a", "b"]:
-        print(f"{w or 'ε':<8}{'ACEPTA' if acepta(w) else 'RECHAZA'}")
+    for w in ["ab", "aabb", "aaabbb", "abab", "aab", "abb", "ba", "", "a", "b", "abc"]:
+        print(f"{w or 'ε':<8}{'ACEPTA' if acepta(w, ap) else 'RECHAZA'}")
